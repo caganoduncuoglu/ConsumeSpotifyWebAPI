@@ -1,5 +1,5 @@
 # ConsumeSpotifyWebAPI (Improved)
-This educational project is an MVC-based application that interacts with the Spotify Web API to retrieve and display music data. It features two main sections: "New Releases" and "Recommendations." 
+This simple project is an MVC-based application that interacts with the Spotify Web API to retrieve and display music data. It features two main sections: "New Releases" and "Recommendations." 
 In the "New Releases" section, users can view the latest albums, while the "Recommendations" section allows users to select a genre and receive tailored music recommendations based on their choice. 
 The application demonstrates how to consume external APIs, manage asynchronous operations, and present dynamic content using Razor Views in ASP.NET Core MVC.
 
