@@ -2,6 +2,7 @@ using ConsumeSpotifyWebAPI.Models;
 using ConsumeSpotifyWebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ConsumeSpotifyWebAPI.Controllers
@@ -19,20 +20,40 @@ namespace ConsumeSpotifyWebAPI.Controllers
 			_spotifyService = spotifyService;
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(string tab, string genre)
 		{
-			var releases = await GetReleases();
 
-			return View(releases);
-		}		
+            string accessToken = await _spotifyAccountService.GetToken(_configuration["Spotify:ClientId"], _configuration["Spotify:ClientSecret"]);
+            int limit = 20;
 
-		public async Task<IEnumerable<Release>> GetReleases()
+            if (tab == "recommendations")
+            {
+                ViewData["Tab"] = "recommendations";
+
+                var genres = await _spotifyService.GetGenres(accessToken);
+                ViewData["Genres"] = genres;
+
+                var recommendations = genre != null
+                    ? await _spotifyService.GetRecommendations(genre, limit, accessToken)
+                    : Enumerable.Empty<Release>();
+
+                return View(recommendations);
+            }
+            else
+            {
+                ViewData["Tab"] = "new-releases";
+
+                // New Releases
+                var releases = await GetReleases(limit, accessToken);
+                return View(releases);
+            }
+        }
+
+        public async Task<IEnumerable<Release>> GetReleases(int limit, string token)
 		{
 			try
 			{
-				var token = await _spotifyAccountService.GetToken(_configuration["Spotify:ClientId"], _configuration["Spotify:ClientSecret"]);
-			
-				var newReleases = await _spotifyService.GetNewReleases(20, token);	
+				var newReleases = await _spotifyService.GetNewReleases(limit, token);	
 
 				return newReleases;
 			}
